@@ -148,6 +148,24 @@
             background-color: #ffb300;
         }
 
+        .reset-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            background-color: #999;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            z-index: 1000;
+        }
+
+        .reset-button:hover {
+            background-color: #777;
+        }
+
         .info-box {
             background-color: #d4edda;
             border-left: 4px solid #28a745;
@@ -205,24 +223,23 @@
 
         .form-group label {
             font-weight: 600;
-            margin-bottom: 5px;
-            font-size: 14px;
+            margin-bottom: 3px;
+            font-size: 12px;
             color: #333;
         }
 
         .form-group input,
         .form-group textarea {
-            padding: 10px;
+            padding: 8px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            font-size: 14px;
+            font-size: 13px;
             font-family: inherit;
         }
 
         .form-group textarea {
-            grid-column: 1 / -1;
             resize: vertical;
-            min-height: 100px;
+            min-height: 45px;
         }
 
         .form-group input:focus,
@@ -296,11 +313,13 @@
             font-weight: 600;
             border-bottom: 2px solid #ddd;
             color: #1976d2;
+            white-space: nowrap;
         }
 
         td {
             padding: 12px;
             border-bottom: 1px solid #eee;
+            white-space: nowrap;
         }
 
         tr:hover {
@@ -461,6 +480,9 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Reset Button -->
+        <button class="reset-button" onclick="resetSetup()">Reset Setup</button>
     </div>
 
     <script>
@@ -502,6 +524,16 @@
             setInterval(loadJobs, 5000);
         }
 
+        function resetSetup() {
+            if (confirm('Are you sure? This will clear the stored URL and show setup again.')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.getElementById('setupBox').classList.add('show');
+                document.getElementById('infoBox').classList.remove('show');
+                document.getElementById('formSection').classList.add('disabled');
+                document.getElementById('scriptUrl').value = '';
+            }
+        }
+
         function showError(message) {
             const errorBox = document.getElementById('errorBox');
             errorBox.textContent = '❌ ' + message;
@@ -527,8 +559,8 @@
             const referenceNumber = document.getElementById('referenceNumber').value;
             const memoNotes = document.getElementById('memoNotes').value;
 
-            if (!customerName || !jobNumber) {
-                showError('Please fill in Customer Name and Job Number');
+            if (!customerName) {
+                showError('Please fill in Customer Name');
                 return;
             }
 
