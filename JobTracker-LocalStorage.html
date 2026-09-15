@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pre-Bid Job Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 20px;
+        }
+
+        .header-icon {
+            font-size: 40px;
+            margin-right: 15px;
+        }
+
+        .header-text h1 {
+            color: #1976d2;
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+
+        .header-text p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-card:nth-child(2) {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .stat-card:nth-child(3) {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section h2 {
+            color: #1976d2;
+            font-size: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            grid-column: 1 / -1;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #1976d2;
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+
+        .btn-secondary {
+            background-color: #9e9e9e;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #858585;
+        }
+
+        .search-section {
+            margin-bottom: 20px;
+        }
+
+        .search-section input {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            background-color: #f5f5f5;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #ddd;
+            color: #1976d2;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+            margin: 0 3px;
+        }
+
+        .btn-delete {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background-color: #da190b;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .info-box {
+            background-color: #e3f2fd;
+            border-left: 4px solid #1976d2;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            color: #0d47a1;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-icon">📋</div>
+            <div class="header-text">
+                <h1>Pre-Bid Job Tracker</h1>
+                <p>Track your construction jobs and project details</p>
+            </div>
+        </div>
+
+        <!-- Info Box -->
+        <div class="info-box">
+            ✓ Data is saved locally on your device. Each person who accesses this tracker will have their own copy of the data.
+        </div>
+
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-label">Total Jobs</div>
+                <div class="stat-value" id="totalJobs">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Labor Amount</div>
+                <div class="stat-value" id="totalLabor">$0.00</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Reimbursement</div>
+                <div class="stat-value" id="totalReimbursement">$0.00</div>
+            </div>
+        </div>
+
+        <!-- Add New Job Form -->
+        <div class="form-section">
+            <h2>➕ Add New Job</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" id="date" />
+                </div>
+                <div class="form-group">
+                    <label>Customer Name</label>
+                    <input type="text" id="customerName" placeholder="Customer Name" />
+                </div>
+                <div class="form-group">
+                    <label>Address</label>
+                    <input type="text" id="address" placeholder="Address" />
+                </div>
+                <div class="form-group">
+                    <label>Job Number</label>
+                    <input type="text" id="jobNumber" placeholder="Job Number" />
+                </div>
+                <div class="form-group">
+                    <label>Contractor/Vendor</label>
+                    <input type="text" id="contractor" placeholder="Contractor/Vendor" />
+                </div>
+                <div class="form-group">
+                    <label>Labor Amount</label>
+                    <input type="number" id="laborAmount" placeholder="0.00" step="0.01" />
+                </div>
+                <div class="form-group">
+                    <label>Reimbursement Amount</label>
+                    <input type="number" id="reimbursementAmount" placeholder="0.00" step="0.01" />
+                </div>
+                <div class="form-group">
+                    <label>Reference Number</label>
+                    <input type="text" id="referenceNumber" placeholder="Reference Number" />
+                </div>
+                <div class="form-group">
+                    <label>Memo / Notes</label>
+                    <textarea id="memoNotes" placeholder="Add any notes about this job..."></textarea>
+                </div>
+            </div>
+            <div class="button-group">
+                <button class="btn-primary" onclick="addJob()">✓ Add Job</button>
+                <button class="btn-secondary" onclick="clearForm()">Clear Form</button>
+            </div>
+        </div>
+
+        <!-- Search and Data Table -->
+        <div class="search-section">
+            <input type="text" id="searchInput" placeholder="Search jobs..." onkeyup="searchJobs()" />
+        </div>
+
+        <div class="table-responsive">
+            <table id="jobsTable">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Customer Name</th>
+                        <th>Address</th>
+                        <th>Job Number</th>
+                        <th>Contractor/Vendor</th>
+                        <th>Labor Amount</th>
+                        <th>Reimbursement</th>
+                        <th>Reference Number</th>
+                        <th>Memo / Notes</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr class="empty-state">
+                        <td colspan="10">No jobs yet. Add one using the form above.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let jobs = [];
+        const STORAGE_KEY = 'prebidJobTracker_jobs';
+
+        // Load jobs from local storage on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            loadJobsFromStorage();
+            document.getElementById('date').valueAsDate = new Date();
+        });
+
+        // Save jobs to local storage
+        function saveJobsToStorage() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(jobs));
+        }
+
+        // Load jobs from local storage
+        function loadJobsFromStorage() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                try {
+                    jobs = JSON.parse(stored);
+                    updateDisplay();
+                } catch (e) {
+                    console.error('Error loading jobs:', e);
+                    jobs = [];
+                }
+            }
+        }
+
+        function addJob() {
+            const date = document.getElementById('date').value;
+            const customerName = document.getElementById('customerName').value;
+            const address = document.getElementById('address').value;
+            const jobNumber = document.getElementById('jobNumber').value;
+            const contractor = document.getElementById('contractor').value;
+            const laborAmount = document.getElementById('laborAmount').value;
+            const reimbursementAmount = document.getElementById('reimbursementAmount').value;
+            const referenceNumber = document.getElementById('referenceNumber').value;
+            const memoNotes = document.getElementById('memoNotes').value;
+
+            if (!customerName || !jobNumber) {
+                alert('Please fill in Customer Name and Job Number');
+                return;
+            }
+
+            const job = {
+                date: date || new Date().toISOString().split('T')[0],
+                customerName,
+                address,
+                jobNumber,
+                contractor,
+                laborAmount: parseFloat(laborAmount) || 0,
+                reimbursementAmount: parseFloat(reimbursementAmount) || 0,
+                referenceNumber,
+                memoNotes,
+                timestamp: new Date().toISOString()
+            };
+
+            jobs.push(job);
+            saveJobsToStorage();
+            clearForm();
+            updateDisplay();
+            alert('Job added successfully!');
+        }
+
+        function clearForm() {
+            document.getElementById('date').valueAsDate = new Date();
+            document.getElementById('customerName').value = '';
+            document.getElementById('address').value = '';
+            document.getElementById('jobNumber').value = '';
+            document.getElementById('contractor').value = '';
+            document.getElementById('laborAmount').value = '';
+            document.getElementById('reimbursementAmount').value = '';
+            document.getElementById('referenceNumber').value = '';
+            document.getElementById('memoNotes').value = '';
+        }
+
+        function updateDisplay() {
+            const tbody = document.getElementById('tableBody');
+
+            if (jobs.length === 0) {
+                tbody.innerHTML = '<tr class="empty-state"><td colspan="10">No jobs yet. Add one using the form above.</td></tr>';
+                document.getElementById('totalJobs').textContent = '0';
+                document.getElementById('totalLabor').textContent = '$0.00';
+                document.getElementById('totalReimbursement').textContent = '$0.00';
+                return;
+            }
+
+            let html = '';
+            let totalLabor = 0;
+            let totalReimbursement = 0;
+
+            jobs.forEach((job, index) => {
+                const labor = parseFloat(job.laborAmount) || 0;
+                const reimbursement = parseFloat(job.reimbursementAmount) || 0;
+                totalLabor += labor;
+                totalReimbursement += reimbursement;
+
+                html += `<tr>
+                    <td>${job.date || ''}</td>
+                    <td>${job.customerName || ''}</td>
+                    <td>${job.address || ''}</td>
+                    <td>${job.jobNumber || ''}</td>
+                    <td>${job.contractor || ''}</td>
+                    <td>$${labor.toFixed(2)}</td>
+                    <td>$${reimbursement.toFixed(2)}</td>
+                    <td>${job.referenceNumber || ''}</td>
+                    <td>${job.memoNotes || ''}</td>
+                    <td><button class="btn-small btn-delete" onclick="deleteJob(${index})">Delete</button></td>
+                </tr>`;
+            });
+
+            tbody.innerHTML = html;
+            document.getElementById('totalJobs').textContent = jobs.length;
+            document.getElementById('totalLabor').textContent = '$' + totalLabor.toFixed(2);
+            document.getElementById('totalReimbursement').textContent = '$' + totalReimbursement.toFixed(2);
+        }
+
+        function deleteJob(index) {
+            if (!confirm('Are you sure you want to delete this job?')) return;
+
+            jobs.splice(index, 1);
+            saveJobsToStorage();
+            updateDisplay();
+        }
+
+        function searchJobs() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll('#tableBody tr:not(.empty-state)');
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+    </script>
+</body>
+</html>
